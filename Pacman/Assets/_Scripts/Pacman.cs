@@ -153,7 +153,7 @@ public class Pacman : MonoBehaviour {
 
 	Turn GetTurn()
 	{
-		if (gm.turns == null || gm.turns.Count == 0) return null;
+		if (gm.turns == null) return null;
 		foreach(Turn turn in gm.turns)
 		{
 			if (gm.CheckSnapThreshold(turn.transform, this.transform))
@@ -167,7 +167,7 @@ public class Pacman : MonoBehaviour {
 
 	void CheckWarps()
 	{
-		if (gm.warps == null || gm.warps.Count == 0) return;
+		if (gm.warps == null) return;
 
 		foreach (Warp warp in gm.warps)
 		{

@@ -12,11 +12,15 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager gm;
 
+	private void Awake()
+	{
+		gm = this;
+	}
+
 	private void Start()
 	{
 		foreach (Turn turn in turns) turn.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 		foreach (Warp warp in warps) warp.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-		gm = this;
 	}
 
 	public bool CheckSnapThreshold(Transform t1, Transform t2)
