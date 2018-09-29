@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour {
 
 	public List<Turn> turns;
 	public List<Warp> warps;
+	public List<Pellet> pellets;
+	public List<PowerPellet> powerPellets;
+	public Pacman pacman;
 
 	[SerializeField]
 	public float snapThreshold = 0.1f;

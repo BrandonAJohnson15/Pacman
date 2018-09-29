@@ -2,18 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pacman : MonoBehaviour {
-	
-	[SerializeField]
-	private float speed = 4f;
-	
-	private Vector2 CurVelocity;
-	public Direction curDir;
-	public Direction nextDir;
-	bool canChangeDir;
-	Animator anim;
+public class Pacman : GameEntity {
 
-	GameManager gm;
+	public int score = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -24,18 +15,7 @@ public class Pacman : MonoBehaviour {
 		canChangeDir = false;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		CheckInput();
-		CheckWarps();
-	}
-
-	private void FixedUpdate()
-	{	
-		this.transform.Translate(CurVelocity*Time.deltaTime);
-	}
-
-	void CheckInput()
+	public override void Move()
 	{
 		Turn t = GetTurn();
 		canChangeDir = t != null ? true : false;
@@ -107,75 +87,25 @@ public class Pacman : MonoBehaviour {
 		}
 	}
 
-	void ChangeDir(Direction dir)
+	public override void CheckCollisions()
 	{
-		switch(dir)
+		foreach (Pellet p in gm.pellets)
 		{
-			case Direction.LEFT:
-				CurVelocity = Vector2.left * speed;
-				anim.SetFloat("DirX", -1);
-				anim.SetFloat("DirY", 0);
-				curDir = Direction.LEFT;
-				nextDir = Direction.LEFT;
-
-				break;
-
-			case Direction.RIGHT:
-				CurVelocity = Vector2.right * speed;
-				anim.SetFloat("DirX", 1);
-				anim.SetFloat("DirY", 0);
-				curDir = Direction.RIGHT;
-				nextDir = Direction.RIGHT;
-
-				break;
-
-
-			case Direction.UP:
-				CurVelocity = Vector2.up * speed;
-				anim.SetFloat("DirY", -1);
-				anim.SetFloat("DirX", 0);
-				curDir = Direction.UP;
-				nextDir = Direction.UP;
-
-				break;
-
-			case Direction.DOWN:
-				CurVelocity = Vector2.down * speed;
-				anim.SetFloat("DirY", 1);
-				anim.SetFloat("DirX", 0);
-				curDir = Direction.DOWN;
-				nextDir = Direction.DOWN;
-
-				break;
-		}
-		
-	}
-
-	Turn GetTurn()
-	{
-		if (gm.turns == null) return null;
-		foreach(Turn turn in gm.turns)
-		{
-			if (gm.CheckSnapThreshold(turn.transform, this.transform))
+			if (gm.CheckSnapThreshold(p.gameObject.transform,this.transform) && p.active)
 			{
-				return turn;
+				score += p.scoreAmount;
+				p.GetConsumed();
 			}
 		}
 
-		return null;
-	}
-
-	void CheckWarps()
-	{
-		if (gm.warps == null) return;
-
-		foreach (Warp warp in gm.warps)
+		foreach (PowerPellet p in gm.powerPellets)
 		{
-			if (gm.CheckSnapThreshold(warp.transform, this.transform) && warp.warpDir == curDir)
+			if (gm.CheckSnapThreshold(p.gameObject.transform, this.transform) && p.active)
 			{
-				this.transform.position = warp.destWarp.transform.position;
-				return;
+				score += p.scoreAmount;
+				p.GetConsumed();
 			}
 		}
 	}
+
 }
