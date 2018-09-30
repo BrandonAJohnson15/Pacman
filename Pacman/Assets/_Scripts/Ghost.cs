@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Turn : MonoBehaviour {
-	public List<Direction> availableDirs;
+[System.Serializable]
+public abstract class Ghost : GameEntity {
+
 }
