@@ -5,6 +5,7 @@ using UnityEngine;
 public class Pacman : GameEntity {
 
 	public int score = 0;
+	public int numPelletsConsumed = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +22,7 @@ public class Pacman : GameEntity {
 		canChangeDir = t != null ? true : false;
 		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
 		{
-			if (curDir == Direction.RIGHT)
+			if (CurDir == Direction.RIGHT)
 			{
 				ChangeDir(Direction.LEFT);
 				return;
@@ -36,7 +37,7 @@ public class Pacman : GameEntity {
 		}
 		else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
 		{
-			if (curDir == Direction.LEFT)
+			if (CurDir == Direction.LEFT)
 			{
 				ChangeDir(Direction.RIGHT);
 				return;
@@ -51,7 +52,7 @@ public class Pacman : GameEntity {
 		}
 		else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
 		{
-			if (curDir == Direction.DOWN)
+			if (CurDir == Direction.DOWN)
 			{
 				ChangeDir(Direction.UP);
 				return;
@@ -66,7 +67,7 @@ public class Pacman : GameEntity {
 		}
 		else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
 		{
-			if (curDir == Direction.UP)
+			if (CurDir == Direction.UP)
 			{
 				ChangeDir(Direction.DOWN);
 				return;
@@ -80,7 +81,7 @@ public class Pacman : GameEntity {
 			}
 		}
 
-		if (nextDir != curDir && canChangeDir && gm.CheckSnapThreshold(t.transform, this.transform) && t.availableDirs.Contains(nextDir))
+		if (nextDir != CurDir && canChangeDir && gm.CheckSnapThreshold(t.transform.position, this.transform.position) && t.availableDirs.Contains(nextDir))
 		{
 			this.transform.position = t.transform.position;
 			ChangeDir(nextDir);
@@ -91,16 +92,17 @@ public class Pacman : GameEntity {
 	{
 		foreach (Pellet p in gm.pellets)
 		{
-			if (gm.CheckSnapThreshold(p.gameObject.transform,this.transform) && p.active)
+			if (gm.CheckSnapThreshold(p.gameObject.transform.position,this.transform.position) && p.active)
 			{
 				score += p.scoreAmount;
+				numPelletsConsumed++;
 				p.GetConsumed();
 			}
 		}
 
 		foreach (PowerPellet p in gm.powerPellets)
 		{
-			if (gm.CheckSnapThreshold(p.gameObject.transform, this.transform) && p.active)
+			if (gm.CheckSnapThreshold(p.gameObject.transform.position, this.transform.position) && p.active)
 			{
 				score += p.scoreAmount;
 				p.GetConsumed();

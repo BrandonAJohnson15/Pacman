@@ -2,17 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public abstract class GameEntity : MonoBehaviour {
 	[SerializeField]
 	protected float speed = 4f;
 
 	protected Vector2 CurVelocity;
-	protected Direction curDir;
+	private Direction curDir;
 	protected Direction nextDir;
 	protected bool canChangeDir;
 	protected Animator anim;
 
+	protected bool IsInGhostHouse = false;
+
 	protected GameManager gm;
+
+	public Direction CurDir
+	{
+		get
+		{
+			return curDir;
+		}
+
+		set
+		{
+			curDir = value;
+		}
+	}
 
 	public abstract void Move();
 
@@ -26,7 +42,7 @@ public abstract class GameEntity : MonoBehaviour {
 				CurVelocity = Vector2.left * speed;
 				anim.SetFloat("DirX", -1);
 				anim.SetFloat("DirY", 0);
-				curDir = Direction.LEFT;
+				CurDir = Direction.LEFT;
 				nextDir = Direction.LEFT;
 
 				break;
@@ -35,7 +51,7 @@ public abstract class GameEntity : MonoBehaviour {
 				CurVelocity = Vector2.right * speed;
 				anim.SetFloat("DirX", 1);
 				anim.SetFloat("DirY", 0);
-				curDir = Direction.RIGHT;
+				CurDir = Direction.RIGHT;
 				nextDir = Direction.RIGHT;
 
 				break;
@@ -45,7 +61,7 @@ public abstract class GameEntity : MonoBehaviour {
 				CurVelocity = Vector2.up * speed;
 				anim.SetFloat("DirY", -1);
 				anim.SetFloat("DirX", 0);
-				curDir = Direction.UP;
+				CurDir = Direction.UP;
 				nextDir = Direction.UP;
 
 				break;
@@ -54,7 +70,7 @@ public abstract class GameEntity : MonoBehaviour {
 				CurVelocity = Vector2.down * speed;
 				anim.SetFloat("DirY", 1);
 				anim.SetFloat("DirX", 0);
-				curDir = Direction.DOWN;
+				CurDir = Direction.DOWN;
 				nextDir = Direction.DOWN;
 
 				break;
@@ -80,7 +96,7 @@ public abstract class GameEntity : MonoBehaviour {
 		if (gm.turns == null) return null;
 		foreach (Turn turn in gm.turns)
 		{
-			if (gm.CheckSnapThreshold(turn.transform, this.transform))
+			if (gm.CheckSnapThreshold(turn.transform.position, this.transform.position))
 			{
 				return turn;
 			}
@@ -95,7 +111,7 @@ public abstract class GameEntity : MonoBehaviour {
 
 		foreach (Warp warp in gm.warps)
 		{
-			if (gm.CheckSnapThreshold(warp.transform, this.transform) && warp.warpDir == curDir)
+			if (gm.CheckSnapThreshold(warp.transform.position, this.transform.position) && warp.warpDir == CurDir)
 			{
 				this.transform.position = warp.destWarp.transform.position;
 				return;
